@@ -1,13 +1,12 @@
-import
-{ Skeleton }
-from
-"antd"
-;
+/* eslint-disable react/react-in-jsx-scope */
+import { Skeleton } from 'antd'
 
 function Loading() {
-  return <>
-    <Skeleton/>
-  </>
+  return (
+    <div>
+      <Skeleton />
+    </div>
+  )
 }
 
 export default { Loading }

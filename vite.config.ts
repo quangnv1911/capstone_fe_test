@@ -4,7 +4,8 @@ import { UserConfig } from "vite";
 import path from "path";
 
 const config: UserConfig = {
-  plugins: [react(), vike({ prerender: true })],
+  plugins: [react(),
+     vike(),],
   build: {
     outDir: "./build",
   },

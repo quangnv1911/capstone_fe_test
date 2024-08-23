@@ -1,5 +1,6 @@
 import type { Config } from 'vike/types'
-
+import vikeReact from 'vike-react/config'
+import vikeReactQuery from 'vike-react-query/config'
 // https://vike.dev/config
 export default {
   // https://vike.dev/clientRouting
@@ -17,5 +18,6 @@ export default {
       env: { server: true }
     }
   },
+  extends: [vikeReact, vikeReactQuery],
   hydrationCanBeAborted: true
 } satisfies Config

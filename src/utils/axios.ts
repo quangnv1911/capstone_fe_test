@@ -1,3 +1,5 @@
+/* eslint-disable comma-spacing */
+import { Test, TestType } from './../types/test';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -23,10 +25,10 @@ axios.interceptors.request.use((config) => {
   // const token = store.getState().account.user?.token;
   // if (token) config.headers.Authorization = `Bearer ${token}`;
   // return config;
-  const token = Cookies.get('token') // Đảm bảo tên của cookie là 'token'
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
+  // const token = Cookies.get('token') // Đảm bảo tên của cookie là 'token'
+  // if (token) {
+  //   config.headers.Authorization = `Bearer ${token}`
+  // }
   return config
 })
 
@@ -51,6 +53,7 @@ axios.interceptors.response.use(
         break
       case 401:
         toast.error(data.title)
+        redirect('/login')
         break
       case 403:
         toast.error('You are not allowed to do that!')
@@ -72,22 +75,25 @@ const requests = {
         params,
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-type': 'application/json',
         },
       })
       .then(responseBody),
-  post: (url: string, token?: string, body: object) =>
+  post: (url: string, token?: string, body?: object) =>
     axios
       .post(url, body, {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-type': 'application/json',
         },
       })
       .then(responseBody),
-  put: (url: string, token?: string, body: object) =>
+  put: (url: string, token?: string, body?: object) =>
     axios
       .put(url, body, {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-type': 'application/json',
         },
       })
       .then(responseBody),
@@ -99,7 +105,7 @@ const requests = {
         },
       })
       .then(responseBody),
-  postFile: (url: string, token?: string, data: FormData) =>
+  postFile: (url: string, token?: string, data?: FormData) =>
     axios
       .post(url, data, {
         headers: {
@@ -108,7 +114,7 @@ const requests = {
         },
       })
       .then(responseBody),
-  putFile: (url: string, token?: string, data: FormData) =>
+  putFile: (url: string, token?: string, data?: FormData) =>
     axios
       .put(url, data, {
         headers: {
@@ -121,18 +127,24 @@ const requests = {
 }
 
 const Account = {
-  login: (values: any, token: string) => requests.post(META.BASE_URL + values, token, values),
+  login: (values: any) => requests.post(META.BASE_URL + '/auth/login','' ,values),
   register: (values: any) => requests.post('account/register', values),
 }
 
 const Slide = {
   list: (token?: string) => requests.get(META.BACKEND + '/sliders/list', token),
-  getId: (token?: string) => requests.get(META.BACKEND + values, token)
+  getId: (token?: string) => requests.get(META.BACKEND + '/slider/get', token)
+}
+
+const Test = {
+  list: (token?: string) => requests.get(META.BACKEND + '/test/list', token),
+  add: (token?: string, body?: TestType) => requests.post(META.BACKEND + '/test/add', token, body)
 }
 
 const agent = {
   Account,
-  Slide
+  Slide,
+  Test
 }
 
 export default agent
