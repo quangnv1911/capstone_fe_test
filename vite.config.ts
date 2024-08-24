@@ -5,7 +5,7 @@ import path from "path";
 
 const config: UserConfig = {
   plugins: [react(),
-     vike(),],
+     vike()],
   build: {
     outDir: "./build",
   },

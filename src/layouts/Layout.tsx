@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 export { Layout }
 import React from 'react'
 import logoUrl from '#assets/img/logo.svg'
@@ -8,7 +9,10 @@ import '../assets/css/index.css'
 import '../assets/css/Layout/Layout.css'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import RQProvider from '#utils/providers/RQProvider.js'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
 function Layout({
   children,
   pageContext,
@@ -16,24 +20,28 @@ function Layout({
   children: React.ReactNode
   pageContext: PageContext
 }) {
-  const queryClient = new QueryClient()
+  const { dehydratedState } = pageContext
   return (
     <React.StrictMode>
       <PageContextProvider pageContext={pageContext}>
-        <QueryClientProvider client={queryClient}>
-          <ToastContainer position='top-right' hideProgressBar theme='colored' />
-          <Frame>
-            <Sidebar>
-              <Logo />
-              <Link href='/'>Welcome</Link>
-              <Link href='/about'>About</Link>
-              <Link href='/star-wars'>Data Fetching</Link>
-              <Link href='/login'>Login</Link>
-              <Link href='/test'>Test</Link>
-            </Sidebar>
-            <Content>{children}</Content>
-          </Frame>
-        </QueryClientProvider>
+        <RQProvider>
+          <HydrationBoundary state={dehydratedState}>
+            <ToastContainer position='top-right' hideProgressBar theme='colored' />
+            <Frame>
+              <Sidebar>
+                <Logo />
+                <Link href='/'>Welcome</Link>
+                <Link href='/about'>About</Link>
+                <Link href='/star-wars'>Data Fetching</Link>
+                <Link href='/login'>Login</Link>
+                <Link href='/test'>Test</Link>
+                <Link href='/posts'>Posts</Link>
+              </Sidebar>
+              <Content>{children}</Content>
+            </Frame>
+          </HydrationBoundary>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </RQProvider>
       </PageContextProvider>
     </React.StrictMode>
   )

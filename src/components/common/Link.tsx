@@ -1,12 +1,14 @@
-import { usePageContext } from "#src/hooks/usePageContext.js"; 
+import { usePageContext } from '#hooks/usePageContext.tsx'
 
 export { Link }
 
-function Link(props: { href: string; className?: string; children: React.ReactNode }) {
-  const pageContext = usePageContext()
+function Link({ href, children }: { href: string; children: string }) {
+  const pageContext = usePageContext() as { urlPathname: string } // TODO
   const { urlPathname } = pageContext
-  const { href } = props
   const isActive = href === '/' ? urlPathname === href : urlPathname.startsWith(href)
-  const className = [props.className, isActive && 'is-active'].filter(Boolean).join(' ')
-  return <a {...props} className={className} />
+  return (
+    <a href={href} className={isActive ? 'is-active' : undefined}>
+      {children}
+    </a>
+  )
 }
