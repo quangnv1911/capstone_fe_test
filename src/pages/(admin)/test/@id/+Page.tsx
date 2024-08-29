@@ -1,4 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
 import { usePageContext } from '#hooks/usePageContext.js'
 
 export { Page }

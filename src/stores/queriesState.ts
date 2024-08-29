@@ -6,8 +6,8 @@ type QueriesState = {
   knownQueries: Map<string, boolean>
 }
 
-const useQueriesState = create<QueriesState>()((set) => ({
-  knownQueries: new Map<string, boolean>()
+const useQueriesState = create<QueriesState>()(() => ({
+  knownQueries: new Map<string, boolean>(),
 }))
 
 export default useQueriesState

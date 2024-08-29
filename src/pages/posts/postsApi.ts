@@ -1,18 +1,18 @@
-import axios from "axios";
-import { Post } from "./type";
+import axios from 'axios'
+import { Post } from './type'
 
 export async function getPosts(): Promise<Post[]> {
-    const response = await axios("https://jsonplaceholder.typicode.com/posts")
+  const response = await axios('https://jsonplaceholder.typicode.com/posts')
 
-    const posts: Post[] = await response.data
+  const posts: Post[] = await response.data
 
-    return posts
+  return posts
 }
 
 export async function getPost(id: string): Promise<Post> {
-    const response = await axios(`https://jsonplaceholder.typicode.com/posts/${id}`)
+  const response = await axios(`https://jsonplaceholder.typicode.com/posts/${id}`)
 
-    const post: Post = await response.data
+  const post: Post = await response.data
 
-    return post
+  return post
 }

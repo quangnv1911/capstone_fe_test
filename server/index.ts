@@ -1,13 +1,20 @@
-import express from 'express'
+import express, { Request, Response , Express, NextFunction } from 'express'
 import { renderPage } from 'vike/server'
 import { root } from './root.js'
 import cookieParser from 'cookie-parser'
-import { rollupVersion } from 'vite'
+// import { rollupVersion } from 'vite';
 
 const isProduction = process.env.NODE_ENV === 'production'
 const port = process.env.PORT || 3000
 
-startServer()
+void startServer()
+
+export interface IGetUserAuthInfoRequest extends Request {
+  userName?: string
+  role?: string
+  token?: string
+}
+
 
 async function startServer() {
   const app = express()
@@ -15,12 +22,13 @@ async function startServer() {
   await assets(app)
   vike(app)
   app.listen(port)
+  // eslint-disable-next-line no-console
   console.log(`Server running at http://localhost:${port}`)
 }
 
-function auth(app) {
+function auth(app: Express) {
   app.use(cookieParser())
-  app.use(function (req, _res, next) {
+  app.use(function (req: IGetUserAuthInfoRequest, _res: Response, next: NextFunction) {
     const { username, role, token } = req.cookies
     req.userName = username || ''
     req.role = role || ''
@@ -31,17 +39,17 @@ function auth(app) {
 
   app.use(express.json()) // Parse & make HTTP request body available at `req.body`
 
-  app.post('/auth/login', async (req: any, res: any) => {
-    const { userName, password } = req.body
+  app.post('/auth/login', async (req: Request, res: Response) => {
+    const { userName, password }: { userName: string; password: string } = req.body
     const response = await fetch('http://localhost:8080/authenticate', {
       method: 'POST', // hoặc 'GET', 'PUT', 'DELETE', tùy thuộc vào loại yêu cầu bạn muốn thực hiện
       headers: {
         'Content-Type': 'application/json',
-      }, // Đặt loại nội dung mà bạn muốn gửi, ví dụ như JSON},
+      }, 
       body: JSON.stringify({
-        userName: userName,
-        password: password,
-      }), // Gửi dữ liệu tới server. Chỉ sử dụng body với các phương thức như POST, PUT, DELETE
+        userName,
+        password,
+      }), 
     })
     if (!response.ok) {
       return res.status(401).json({ success: false, message: 'Invalid credentials' })
@@ -51,7 +59,7 @@ function auth(app) {
       res.cookie('username', user.userName, {
         maxAge: 24 * 60 * 60 * 1000, // One day
         httpOnly: true, // Only the server can read the cookie
-        secure: true
+        secure: true,
       })
       res.cookie('role', user.role, {
         maxAge: 24 * 60 * 60 * 1000, // One day
@@ -66,13 +74,13 @@ function auth(app) {
     const success = !!user
     res.end(JSON.stringify({ success }))
   })
-  app.post('/_auth/logout', (_req, res) => {
+  app.post('/_auth/logout', (_req: Request, res: Response) => {
     res.clearCookie('username')
     res.end()
   })
 }
 
-async function assets(app) {
+async function assets(app: Express) {
   if (isProduction) {
     app.use(express.static(`${root}/dist/client`))
   } else {
@@ -87,8 +95,8 @@ async function assets(app) {
   }
 }
 
-function vike(app) {
-  app.get('*', async (req, res, next) => {
+function vike(app: Express) {
+  app.get('*', async (req: Request, res: Response, next: NextFunction) => {
     const pageContextInit = {
       urlOriginal: req.originalUrl,
     }

@@ -1,4 +1,4 @@
-import { postsQueries } from "../postsQueries"
+import { postsQueries } from '../postsQueries'
 
 const prefetchQuery = postsQueries.list
 

@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 export default function RQProvider({ children }: { children: React.ReactNode }) {
-  const [queryClient] = React.useState(
+  const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: {

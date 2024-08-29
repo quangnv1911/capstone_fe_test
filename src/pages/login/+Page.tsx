@@ -1,8 +1,8 @@
-/* eslint-disable react/react-in-jsx-scope */
 import agent from '#utils/axios.js'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { redirect } from 'vike/abort'
+import React, { MouseEvent } from 'react'
 
 export { Page }
 export interface JWT {
@@ -12,15 +12,14 @@ function Page() {
   const [userName, setUserName] = useState('')
   const [password, setPassword] = useState('')
 
-  async function onLoginClick(e: any) {
+  async function onLoginClick(e:  MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
-    let response: JWT
     const data = {
-      userName: userName,
-      password: password,
+      userName,
+      password,
     }
-    response = await agent.Account.login(JSON.stringify(data)).catch(error => console.log(error))
-    toast.error('error')
+    const response: JWT = await agent.Account.login(data).catch(() => redirect('/login'))
+    toast.error(response.jwt)
     redirect('/')
   }
 
@@ -53,9 +52,7 @@ function Page() {
         <button type='submit' onClick={onLoginClick}>
           Login
         </button>
-        <button onClick={() => handleToast()}>
-          Toast
-        </button>
+        <button onClick={() => handleToast()}>Toast</button>
       </div>
     </>
   )

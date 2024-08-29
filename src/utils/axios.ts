@@ -1,34 +1,30 @@
-/* eslint-disable comma-spacing */
-import { Test, TestType } from './../types/test';
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable promise/prefer-await-to-callbacks */
-/* eslint-disable prettier/prettier */
+import { TestType } from '#src/types/test.js'
 import { META } from '#utils/env.ts'
-
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { toast } from 'react-toastify'
 import { redirect } from 'vike/abort'
+import useAuthStore from '#stores/authState.js'
+import generateChecksum from './helper/checkSum'
 
 // axios.defaults.baseURL = (import.meta.env.PUBLIC_ENV__META__BASE_URL ?? 'http://localhost:3000') as string
 
 // axios.defaults.withCredentials = true;
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-const responseBody = (response: AxiosResponse) => response.data
+const responseBody = <T>(response: AxiosResponse<T>): T => {
+  return response.data
+}
 
 axios.interceptors.request.use((config) => {
-  // const token = store.getState().account.user?.token;
-  // if (token) config.headers.Authorization = `Bearer ${token}`;
-  // return config;
-  // const token = Cookies.get('token') // Đảm bảo tên của cookie là 'token'
-  // if (token) {
-  //   config.headers.Authorization = `Bearer ${token}`
-  // }
+  const token = useAuthStore.getState().accessToken
+  const csrfToken = useAuthStore.getState().csrfToken
+  const campusCode = useAuthStore.getState().campusCode
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  config.headers['Check-sum'] = generateChecksum(
+    `PublicKey1${campusCode} PublicKey2`,
+    META.CHECKSUM_KEY,
+  )
+  config.headers['X-CSRF-Token'] = csrfToken
   return config
 })
 
@@ -36,33 +32,33 @@ axios.interceptors.response.use(
   (response) => {
     return response
   },
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
     const { data, status } = error.response as AxiosResponse
     switch (status) {
-      case 400:
-        if (data.errors) {
-          const modelStateErrors: string[] = []
-          for (const key in data.errors) {
-            if (data.errors[key]) {
-              modelStateErrors.push(data.errors[key])
-            }
+    case 400:
+      if (data.errors) {
+        const modelStateErrors: string[] = []
+        for (const key in data.errors) {
+          if (data.errors[key]) {
+            modelStateErrors.push(data.errors[key])
           }
-          throw modelStateErrors.flat()
         }
-        toast.error(data.title)
-        break
-      case 401:
-        toast.error(data.title)
-        redirect('/login')
-        break
-      case 403:
-        toast.error('You are not allowed to do that!')
-        break
-      case 500:
-        throw redirect('/login')
-        break
-      default:
-        break
+        throw modelStateErrors.flat()
+      }
+      toast.error(data.title)
+      break
+    case 401:
+      toast.error(data.title)
+      redirect('/login')
+      break
+    case 403:
+      toast.error('You are not allowed to do that!')
+      break
+    case 500:
+      throw redirect('/login')
+      break
+    default:
+      break
     }
     return Promise.reject(error.response)
   },
@@ -127,24 +123,24 @@ const requests = {
 }
 
 const Account = {
-  login: (values: any) => requests.post(META.BASE_URL + '/auth/login','' ,values),
-  register: (values: any) => requests.post('account/register', values),
+  login: (values: object) => requests.post(META.BASE_URL + '/auth/login', '', values),
+  register: (values: object) => requests.post('account/register', values),
 }
 
 const Slide = {
   list: (token?: string) => requests.get(META.BACKEND + '/sliders/list', token),
-  getId: (token?: string) => requests.get(META.BACKEND + '/slider/get', token)
+  getId: (token?: string) => requests.get(META.BACKEND + '/slider/get', token),
 }
 
-const Test = {
+const TestAgent = {
   list: (token?: string) => requests.get(META.BACKEND + '/test/list', token),
-  add: (token?: string, body?: TestType) => requests.post(META.BACKEND + '/test/add', token, body)
+  add: (token?: string, body?: TestType) => requests.post(META.BACKEND + '/test/add', token, body),
 }
 
 const agent = {
   Account,
   Slide,
-  Test
+  TestAgent,
 }
 
 export default agent

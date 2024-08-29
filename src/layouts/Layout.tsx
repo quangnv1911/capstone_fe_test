@@ -1,5 +1,3 @@
-/* eslint-disable import/first */
-export { Layout }
 import React from 'react'
 import logoUrl from '#assets/img/logo.svg'
 import { PageContextProvider } from '#src/hooks/usePageContext.js'
@@ -9,7 +7,7 @@ import '../assets/css/index.css'
 import '../assets/css/Layout/Layout.css'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { HydrationBoundary } from '@tanstack/react-query'
 import RQProvider from '#utils/providers/RQProvider.js'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -110,3 +108,5 @@ function Logo() {
     </div>
   )
 }
+
+export { Layout }

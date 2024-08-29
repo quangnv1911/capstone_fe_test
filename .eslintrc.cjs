@@ -5,43 +5,55 @@ module.exports = {
     es2021: true,
   },
   extends: [
-    'standard',
     'eslint:recommended',
-    'plugin:@eslint-community/eslint-comments/recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:import/recommended',
-    'plugin:import/typescript',
-    'plugin:promise/recommended',
     'plugin:react/recommended',
-    'plugin:jsx-a11y/recommended',
+    'plugin:react-hooks/recommended'
   ],
   parserOptions: {
     ecmaVersion: 'latest',
-    parser: '@typescript-eslint/parser',
     sourceType: 'module',
     ecmaFeatures: {
-      jsx: true, // Enable JSX parsing
+      jsx: true,
     },
   },
   plugins: [
     '@typescript-eslint',
-    'import',
-    'promise',
     'react',
     'react-hooks',
-    'jsx-a11y',
-    'security',
   ],
   settings: {
-    'import/resolver': {
-      typescript: true,
-      node: true,
-    },
     react: {
-      version: 'detect', // Automatically detect the React version
+      version: 'detect',
     },
   },
   rules: {
-    'no-console': 'error' 
-  }
+    'no-console': 'error',
+    'no-debugger': 'error',
+    camelcase: 'error',
+    indent: ['error', 2],
+    'linebreak-style': ['error', 'unix'],
+    semi: ['error', 'never'],
+    'react/prop-types': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
+    "@typescript-eslint/no-namespace": "off"
+  },
+  overrides: [
+    {
+      files: ['*.ts', '*.tsx'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        tsconfigRootDir: __dirname,
+        project: ['./tsconfig.json'],
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      rules: {
+        '@typescript-eslint/no-floating-promises': ['error', { ignoreVoid: true }],
+        'no-void': ['error', { allowAsStatement: true }],
+      },
+    },
+  ],
 }

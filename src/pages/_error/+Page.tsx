@@ -1,6 +1,6 @@
-export { Page }
+import { usePageContext } from '#src/hooks/usePageContext.js'
 
-import { usePageContext } from "#src/hooks/usePageContext.js" 
+export { Page }
 
 function Page() {
   const pageContext = usePageContext()
@@ -22,7 +22,7 @@ function Center({ children }: { children: React.ReactNode }) {
         height: 'calc(100vh - 100px)',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
       }}
     >
       {children}

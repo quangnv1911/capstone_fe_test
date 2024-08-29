@@ -1,9 +1,6 @@
 import path from 'node:path'
 import { fileURLToPath } from 'url'
-
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { build } from 'esbuild'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import fs, { ensureDir, remove } from 'fs-extra'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -43,13 +40,12 @@ async function buildServer() {
       },
     ],
   })
-  const { text } = result.outputFiles[0];
-  const filePath = path.join(path.resolve(__dirname, '../../build/'), 'index.cjs');
+  const { text } = result.outputFiles[0]
+  const filePath = path.join(path.resolve(__dirname, '../../build/'), 'index.cjs')
   if (fs.existsSync(filePath)) {
     await remove(filePath)
   }
   await ensureDir(path.dirname(filePath))
-  // eslint-disable-next-line import/no-named-as-default-member
   await fs.writeFile(filePath, text)
 }
 

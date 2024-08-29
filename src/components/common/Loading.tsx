@@ -1,4 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
 import { Skeleton } from 'antd'
 
 function Loading() {
